@@ -7,6 +7,7 @@ from pydantic import BaseModel, UUID4
 from typing import Dict, Any, Optional
 from datetime import datetime
 from enum import Enum
+import json
 
 
 class EventStatus(str, Enum):
@@ -55,7 +56,13 @@ class DebeziumPayload(BaseModel):
 
     def to_outbox_event(self) -> OutboxEvent:
         """Convert Debezium payload to OutboxEvent"""
-        return OutboxEvent(**self.after)
+        event_data = self.after.copy()
+
+        # Parse payload if it's a JSON string
+        if "payload" in event_data and isinstance(event_data["payload"], str):
+            event_data["payload"] = json.loads(event_data["payload"])
+
+        return OutboxEvent(**event_data)
 
 
 class ProcessingResult(BaseModel):

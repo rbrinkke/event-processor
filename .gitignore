@@ -152,6 +152,13 @@ logs/
 kafka-data/
 zookeeper-data/
 
+# Database data (Docker volumes)
+postgres-data/
+mongodb-data/
+
 # Local development
 .env.local
 .env.*.local
+
+# Keep .env.example for documentation
+!.env.example

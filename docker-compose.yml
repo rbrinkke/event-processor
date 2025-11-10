@@ -2,6 +2,55 @@ version: '3.8'
 
 services:
   # ===========================
+  # DATABASE SERVICES
+  # ===========================
+
+  postgres:
+    image: postgres:15-alpine
+    container_name: event-postgres
+    environment:
+      POSTGRES_DB: activity_db
+      POSTGRES_USER: activity_user
+      POSTGRES_PASSWORD: secure_password_2024
+    command:
+      - "postgres"
+      - "-c"
+      - "wal_level=logical"
+      - "-c"
+      - "max_wal_senders=10"
+      - "-c"
+      - "max_replication_slots=10"
+    ports:
+      - "5434:5432"
+    networks:
+      - activity-network
+    volumes:
+      - postgres-data:/var/lib/postgresql/data
+      - ./database/schema.sql:/docker-entrypoint-initdb.d/01-schema.sql
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U activity_user -d activity_db"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  mongodb:
+    image: mongo:7
+    container_name: event-mongodb
+    environment:
+      MONGO_INITDB_DATABASE: activity_read
+    ports:
+      - "27025:27017"
+    networks:
+      - activity-network
+    volumes:
+      - mongodb-data:/data/db
+    healthcheck:
+      test: ["CMD", "mongosh", "--eval", "db.adminCommand('ping')"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  # ===========================
   # KAFKA ECOSYSTEM
   # ===========================
 
@@ -87,6 +136,10 @@ services:
       dockerfile: Dockerfile
     container_name: event-processor
     depends_on:
+      postgres:
+        condition: service_healthy
+      mongodb:
+        condition: service_healthy
       kafka:
         condition: service_healthy
       debezium:
@@ -99,15 +152,15 @@ services:
       KAFKA_AUTO_OFFSET_RESET: earliest
 
       # MongoDB
-      MONGODB_URI: ${MONGODB_URI}
-      MONGODB_DATABASE: ${MONGODB_DATABASE:-activity_read}
+      MONGODB_URI: mongodb://mongodb:27017
+      MONGODB_DATABASE: activity_read
 
       # PostgreSQL (voor status updates als nodig)
-      POSTGRES_HOST: ${POSTGRES_HOST}
-      POSTGRES_PORT: ${POSTGRES_PORT:-5432}
-      POSTGRES_DB: ${POSTGRES_DB}
-      POSTGRES_USER: ${POSTGRES_USER}
-      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      POSTGRES_HOST: postgres
+      POSTGRES_PORT: 5432
+      POSTGRES_DB: activity_db
+      POSTGRES_USER: activity_user
+      POSTGRES_PASSWORD: secure_password_2024
 
       # Application
       LOG_LEVEL: ${LOG_LEVEL:-INFO}
@@ -118,7 +171,8 @@ services:
       - activity-network
     restart: unless-stopped
     volumes:
-      - ./app:/app
+      # Mount app code for development hot-reloading
+      - ./app:/app/app
       - ./logs:/logs
 
   # ===========================
@@ -144,6 +198,8 @@ networks:
     external: true
 
 volumes:
+  postgres-data:
+  mongodb-data:
   zookeeper-data:
   zookeeper-logs:
   kafka-data:

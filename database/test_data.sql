@@ -2,7 +2,7 @@
 -- Insert verschillende event types voor testing
 
 -- User Events
-INSERT INTO event_outbox (
+INSERT INTO activity.event_outbox (
     event_id,
     aggregate_id,
     aggregate_type,
@@ -31,7 +31,7 @@ INSERT INTO event_outbox (
 );
 
 -- Activity Events
-INSERT INTO event_outbox (
+INSERT INTO activity.event_outbox (
     event_id,
     aggregate_id,
     aggregate_type,
@@ -66,5 +66,5 @@ SELECT
     event_type,
     status,
     created_at
-FROM event_outbox
+FROM activity.event_outbox
 ORDER BY sequence_id;
