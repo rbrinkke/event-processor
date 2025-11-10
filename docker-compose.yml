@@ -14,7 +14,7 @@ services:
     ports:
       - "2181:2181"
     networks:
-      - event-processor-network
+      - activity-network
     volumes:
       - zookeeper-data:/var/lib/zookeeper/data
       - zookeeper-logs:/var/lib/zookeeper/log
@@ -38,7 +38,7 @@ services:
       KAFKA_GROUP_INITIAL_REBALANCE_DELAY_MS: 0
       KAFKA_AUTO_CREATE_TOPICS_ENABLE: 'true'
     networks:
-      - event-processor-network
+      - activity-network
     volumes:
       - kafka-data:/var/lib/kafka/data
     healthcheck:
@@ -70,7 +70,7 @@ services:
       OFFSET_STORAGE_REPLICATION_FACTOR: 1
       STATUS_STORAGE_REPLICATION_FACTOR: 1
     networks:
-      - event-processor-network
+      - activity-network
     healthcheck:
       test: ["CMD", "curl", "-f", "http://localhost:8083/"]
       interval: 10s
@@ -115,7 +115,7 @@ services:
       MAX_RETRIES: ${MAX_RETRIES:-3}
 
     networks:
-      - event-processor-network
+      - activity-network
     restart: unless-stopped
     volumes:
       - ./app:/app
@@ -137,11 +137,11 @@ services:
       KAFKA_CLUSTERS_0_BOOTSTRAPSERVERS: kafka:29092
       KAFKA_CLUSTERS_0_ZOOKEEPER: zookeeper:2181
     networks:
-      - event-processor-network
+      - activity-network
 
 networks:
-  event-processor-network:
-    driver: bridge
+  activity-network:
+    external: true
 
 volumes:
   zookeeper-data:

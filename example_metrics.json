@@ -1,0 +1,103 @@
+{
+  "timestamp": "2025-11-10T09:34:12.489560+00:00",
+  "duration": {
+    "start_time": "2025-11-10T09:34:12.489196+00:00",
+    "elapsed_seconds": 0.0,
+    "elapsed_formatted": "0.0s"
+  },
+  "totals": {
+    "events_processed": 100,
+    "errors": 2,
+    "success_rate": 98.0
+  },
+  "throughput": {
+    "events_per_second": 271002.71,
+    "events_per_minute": 16216216.22
+  },
+  "latency": {
+    "min": 11.81,
+    "max": 99.56,
+    "avg": 54.6,
+    "p50": 53.46,
+    "p95": 97.57,
+    "p99": 99.56,
+    "count": 100
+  },
+  "event_breakdown": {
+    "ParticipantJoined": 37,
+    "ActivityCreated": 30,
+    "UserCreated": 33
+  },
+  "recent_events": [
+    {
+      "event_type": "ParticipantJoined",
+      "event_id": "event-90",
+      "latency_ms": 80.09840226306675,
+      "timestamp": "2025-11-10T09:34:12.489409+00:00",
+      "success": true
+    },
+    {
+      "event_type": "UserCreated",
+      "event_id": "event-91",
+      "latency_ms": 19.23709584282301,
+      "timestamp": "2025-11-10T09:34:12.489411+00:00",
+      "success": true
+    },
+    {
+      "event_type": "ActivityCreated",
+      "event_id": "event-92",
+      "latency_ms": 78.70877836363181,
+      "timestamp": "2025-11-10T09:34:12.489413+00:00",
+      "success": true
+    },
+    {
+      "event_type": "UserCreated",
+      "event_id": "event-93",
+      "latency_ms": 71.83604355528406,
+      "timestamp": "2025-11-10T09:34:12.489415+00:00",
+      "success": true
+    },
+    {
+      "event_type": "ParticipantJoined",
+      "event_id": "event-94",
+      "latency_ms": 60.16812098753056,
+      "timestamp": "2025-11-10T09:34:12.489417+00:00",
+      "success": true
+    },
+    {
+      "event_type": "ParticipantJoined",
+      "event_id": "event-95",
+      "latency_ms": 36.050042079476356,
+      "timestamp": "2025-11-10T09:34:12.489418+00:00",
+      "success": true
+    },
+    {
+      "event_type": "UserCreated",
+      "event_id": "event-96",
+      "latency_ms": 99.08609707569312,
+      "timestamp": "2025-11-10T09:34:12.489420+00:00",
+      "success": true
+    },
+    {
+      "event_type": "UserCreated",
+      "event_id": "event-97",
+      "latency_ms": 54.657205589453945,
+      "timestamp": "2025-11-10T09:34:12.489422+00:00",
+      "success": true
+    },
+    {
+      "event_type": "ActivityCreated",
+      "event_id": "event-98",
+      "latency_ms": 37.5062332506794,
+      "timestamp": "2025-11-10T09:34:12.489423+00:00",
+      "success": true
+    },
+    {
+      "event_type": "UserCreated",
+      "event_id": "event-99",
+      "latency_ms": 54.22612527447105,
+      "timestamp": "2025-11-10T09:34:12.489425+00:00",
+      "success": true
+    }
+  ]
+}
