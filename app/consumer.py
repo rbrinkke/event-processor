@@ -6,17 +6,14 @@ High-performance async Kafka consumer met error handling
 import asyncio
 import json
 from typing import Optional, Dict, Any
-from contextlib import asynccontextmanager
 import time
 
 from aiokafka import AIOKafkaConsumer
-from aiokafka.errors import KafkaError
 import structlog
 
 from app.config import settings
-from app.models import DebeziumPayload, OutboxEvent, ProcessingResult
+from app.models import DebeziumPayload, ProcessingResult
 from app.registry import handler_registry
-from app.database.mongodb import mongodb
 
 logger = structlog.get_logger()
 
@@ -45,7 +42,7 @@ class EventConsumer:
                 auto_offset_reset=settings.kafka_auto_offset_reset,
                 enable_auto_commit=settings.kafka_enable_auto_commit,
                 max_poll_records=settings.kafka_max_poll_records,
-                value_deserializer=lambda m: json.loads(m.decode('utf-8')),
+                value_deserializer=lambda m: json.loads(m.decode("utf-8")),
             )
 
             await self.consumer.start()
@@ -54,7 +51,7 @@ class EventConsumer:
                 "kafka_consumer_started",
                 topic=settings.kafka_topic,
                 group_id=settings.kafka_group_id,
-                bootstrap_servers=settings.kafka_bootstrap_servers
+                bootstrap_servers=settings.kafka_bootstrap_servers,
             )
 
         except Exception as e:
@@ -75,7 +72,7 @@ class EventConsumer:
             "kafka_consumer_stopped",
             total_processed=self._processing_count,
             total_errors=self._error_count,
-            uptime_seconds=round(uptime, 2)
+            uptime_seconds=round(uptime, 2),
         )
 
     async def process_message(self, message) -> Optional[ProcessingResult]:
@@ -95,12 +92,12 @@ class EventConsumer:
             debezium_payload = DebeziumPayload(**message.value)
 
             # Skip deletes and snapshots
-            if debezium_payload.op in ('d', 'r'):
+            if debezium_payload.op in ("d", "r"):
                 logger.debug(
                     "message_skipped",
                     op=debezium_payload.op,
                     partition=message.partition,
-                    offset=message.offset
+                    offset=message.offset,
                 )
                 return None
 
@@ -114,7 +111,7 @@ class EventConsumer:
                 logger.warning(
                     "no_handlers_found",
                     event_type=event.event_type,
-                    event_id=str(event.event_id)
+                    event_id=str(event.event_id),
                 )
                 return None
 
@@ -123,7 +120,7 @@ class EventConsumer:
                 "processing_event",
                 event_type=event.event_type,
                 event_id=str(event.event_id),
-                handler_count=len(handlers)
+                handler_count=len(handlers),
             )
 
             for handler in handlers:
@@ -134,7 +131,7 @@ class EventConsumer:
                             "event_validation_failed",
                             handler=handler.handler_name,
                             event_type=event.event_type,
-                            event_id=str(event.event_id)
+                            event_id=str(event.event_id),
                         )
                         continue
 
@@ -148,7 +145,7 @@ class EventConsumer:
                         event_type=event.event_type,
                         event_id=str(event.event_id),
                         error=str(handler_error),
-                        error_type=type(handler_error).__name__
+                        error_type=type(handler_error).__name__,
                     )
                     # Continue met volgende handler (niet stoppen!)
                     self._error_count += 1
@@ -162,7 +159,7 @@ class EventConsumer:
                 event_type=event.event_type,
                 event_id=str(event.event_id),
                 processing_time_ms=round(processing_time, 2),
-                total_processed=self._processing_count
+                total_processed=self._processing_count,
             )
 
             return ProcessingResult(
@@ -170,7 +167,7 @@ class EventConsumer:
                 event_id=event.event_id,
                 event_type=event.event_type,
                 handler_name="multiple",
-                processing_time_ms=processing_time
+                processing_time_ms=processing_time,
             )
 
         except Exception as e:
@@ -179,7 +176,7 @@ class EventConsumer:
                 error=str(e),
                 error_type=type(e).__name__,
                 partition=message.partition,
-                offset=message.offset
+                offset=message.offset,
             )
             self._error_count += 1
             return None

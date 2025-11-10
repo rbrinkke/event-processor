@@ -3,7 +3,6 @@ User Event Handlers
 Handlers voor user-gerelateerde events
 """
 
-from typing import Dict, Any
 from datetime import datetime
 
 from app.handlers.base import BaseEventHandler
@@ -69,7 +68,7 @@ class UserCreatedHandler(BaseEventHandler):
             event,
             "user_created_success",
             user_id=str(event.aggregate_id),
-            username=payload.get("username")
+            username=payload.get("username"),
         )
 
 
@@ -117,8 +116,7 @@ class UserUpdatedHandler(BaseEventHandler):
         # Update MongoDB
         users_collection = mongodb.collection("users")
         result = await users_collection.update_one(
-            {"_id": user_id},
-            {"$set": update_fields}
+            {"_id": user_id}, {"$set": update_fields}
         )
 
         if result.matched_count == 0:
@@ -129,7 +127,7 @@ class UserUpdatedHandler(BaseEventHandler):
             event,
             "user_updated_success",
             user_id=user_id,
-            modified_count=result.modified_count
+            modified_count=result.modified_count,
         )
 
 
@@ -152,11 +150,8 @@ class UserStatisticsHandler(BaseEventHandler):
 
         await stats_collection.update_one(
             {"_id": "global_stats"},
-            {
-                "$inc": {"total_users": 1},
-                "$set": {"last_updated": datetime.utcnow()}
-            },
-            upsert=True
+            {"$inc": {"total_users": 1}, "$set": {"last_updated": datetime.utcnow()}},
+            upsert=True,
         )
 
         self.log_event(event, "user_statistics_updated")

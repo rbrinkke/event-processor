@@ -3,7 +3,6 @@ MongoDB Connection Manager
 Async MongoDB client met connection pooling
 """
 
-import asyncio
 from motor.motor_asyncio import AsyncIOMotorClient
 from typing import Optional
 import structlog
@@ -19,7 +18,7 @@ class MongoDBManager:
     Singleton pattern voor hergebruikbare database connectie
     """
 
-    _instance: Optional['MongoDBManager'] = None
+    _instance: Optional["MongoDBManager"] = None
     _client: Optional[AsyncIOMotorClient] = None
 
     def __new__(cls):
@@ -37,11 +36,11 @@ class MongoDBManager:
                     serverSelectionTimeoutMS=settings.mongodb_server_selection_timeout_ms,
                 )
                 # Test connection
-                await self._client.admin.command('ping')
+                await self._client.admin.command("ping")
                 logger.info(
                     "mongodb_connected",
-                    uri=settings.mongodb_uri.split('@')[-1],  # Hide credentials
-                    database=settings.mongodb_database
+                    uri=settings.mongodb_uri.split("@")[-1],  # Hide credentials
+                    database=settings.mongodb_database,
                 )
             except Exception as e:
                 logger.error("mongodb_connection_failed", error=str(e))

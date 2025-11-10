@@ -3,7 +3,7 @@ Handler Registry
 Centralized registration en lookup van event handlers
 """
 
-from typing import Dict, List, Type
+from typing import Dict, List
 import structlog
 
 from app.handlers.base import BaseEventHandler
@@ -57,7 +57,7 @@ class HandlerRegistry:
                 "handlers_registered",
                 event_type=event_type,
                 handlers=handler_names,
-                count=len(handlers)
+                count=len(handlers),
             )
 
     def register(self, handler: BaseEventHandler):
@@ -75,9 +75,7 @@ class HandlerRegistry:
         self._handlers[event_type].append(handler)
 
         logger.debug(
-            "handler_registered",
-            event_type=event_type,
-            handler=handler.handler_name
+            "handler_registered", event_type=event_type, handler=handler.handler_name
         )
 
     def get_handlers(self, event_type: str) -> List[BaseEventHandler]:

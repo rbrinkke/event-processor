@@ -6,7 +6,6 @@ Orchestrates de event processing service
 import asyncio
 import signal
 import sys
-from contextlib import asynccontextmanager
 
 import structlog
 
@@ -20,7 +19,7 @@ structlog.configure(
     processors=[
         structlog.processors.TimeStamper(fmt="iso"),
         structlog.processors.add_log_level,
-        structlog.processors.JSONRenderer()
+        structlog.processors.JSONRenderer(),
     ]
 )
 
@@ -54,7 +53,7 @@ class Application:
             "application_starting",
             version="1.0.0",
             kafka_topic=settings.kafka_topic,
-            mongodb_database=settings.mongodb_database
+            mongodb_database=settings.mongodb_database,
         )
 
         # Connect to MongoDB
@@ -65,8 +64,7 @@ class Application:
 
         # Log registered handlers
         logger.info(
-            "handlers_ready",
-            event_types=handler_registry.registered_event_types
+            "handlers_ready", event_types=handler_registry.registered_event_types
         )
 
         logger.info("application_started")

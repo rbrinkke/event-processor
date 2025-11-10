@@ -3,7 +3,7 @@ Event Models
 Pydantic models voor event validation en type safety
 """
 
-from pydantic import BaseModel, Field, UUID4
+from pydantic import BaseModel, UUID4
 from typing import Dict, Any, Optional
 from datetime import datetime
 from enum import Enum
@@ -11,6 +11,7 @@ from enum import Enum
 
 class EventStatus(str, Enum):
     """Event processing status"""
+
     PENDING = "pending"
     PROCESSING = "processing"
     PROCESSED = "processed"
@@ -22,6 +23,7 @@ class OutboxEvent(BaseModel):
     Event Outbox Model
     Represents a single event from the event_outbox table
     """
+
     event_id: UUID4
     sequence_id: int
     aggregate_id: UUID4
@@ -36,10 +38,7 @@ class OutboxEvent(BaseModel):
     published_at: Optional[datetime] = None
 
     class Config:
-        json_encoders = {
-            datetime: lambda v: v.isoformat(),
-            UUID4: lambda v: str(v)
-        }
+        json_encoders = {datetime: lambda v: v.isoformat(), UUID4: lambda v: str(v)}
 
 
 class DebeziumPayload(BaseModel):
@@ -47,6 +46,7 @@ class DebeziumPayload(BaseModel):
     Debezium CDC Message Format
     The structure that Debezium sends to Kafka
     """
+
     op: str  # 'c' = create, 'u' = update, 'd' = delete, 'r' = read (snapshot)
     ts_ms: int  # Timestamp
     before: Optional[Dict[str, Any]] = None
@@ -60,6 +60,7 @@ class DebeziumPayload(BaseModel):
 
 class ProcessingResult(BaseModel):
     """Result of event processing"""
+
     success: bool
     event_id: UUID4
     event_type: str

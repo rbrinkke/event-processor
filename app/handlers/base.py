@@ -4,11 +4,9 @@ Abstract base class voor alle event handlers
 """
 
 from abc import ABC, abstractmethod
-from typing import Dict, Any
 import structlog
 
 from app.models import OutboxEvent
-from app.database.mongodb import mongodb
 
 logger = structlog.get_logger()
 

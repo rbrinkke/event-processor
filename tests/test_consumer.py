@@ -3,7 +3,6 @@ Consumer Tests
 Tests voor Kafka consumer
 """
 
-import pytest
 
 # TODO: Add consumer tests
 # Example test structure:

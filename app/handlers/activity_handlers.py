@@ -3,7 +3,6 @@ Activity Event Handlers
 Handlers voor activity-gerelateerde events
 """
 
-from typing import Dict, Any
 from datetime import datetime
 
 from app.handlers.base import BaseEventHandler
@@ -68,7 +67,7 @@ class ActivityCreatedHandler(BaseEventHandler):
             event,
             "activity_created_success",
             activity_id=str(event.aggregate_id),
-            title=payload.get("title")
+            title=payload.get("title"),
         )
 
 
@@ -109,8 +108,8 @@ class ParticipantJoinedHandler(BaseEventHandler):
                 "$set": {
                     "metadata.updated_at": datetime.utcnow(),
                     "metadata.last_event_id": str(event.event_id),
-                }
-            }
+                },
+            },
         )
 
         if result.matched_count == 0:
@@ -121,7 +120,7 @@ class ParticipantJoinedHandler(BaseEventHandler):
             event,
             "participant_joined_success",
             activity_id=activity_id,
-            user_id=user_id
+            user_id=user_id,
         )
 
 
@@ -164,15 +163,10 @@ class ActivityUpdatedHandler(BaseEventHandler):
         # Update MongoDB
         activities_collection = mongodb.collection("activities")
         result = await activities_collection.update_one(
-            {"_id": activity_id},
-            {"$set": update_fields}
+            {"_id": activity_id}, {"$set": update_fields}
         )
 
         if result.matched_count == 0:
             raise ValueError(f"Activity not found: {activity_id}")
 
-        self.log_event(
-            event,
-            "activity_updated_success",
-            activity_id=activity_id
-        )
+        self.log_event(event, "activity_updated_success", activity_id=activity_id)
