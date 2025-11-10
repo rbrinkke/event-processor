@@ -1,0 +1,35 @@
+{
+  "name": "postgres-event-outbox-connector",
+  "config": {
+    "connector.class": "io.debezium.connector.postgresql.PostgresConnector",
+    "database.hostname": "YOUR_POSTGRES_HOST",
+    "database.port": "5432",
+    "database.user": "YOUR_POSTGRES_USER",
+    "database.password": "YOUR_POSTGRES_PASSWORD",
+    "database.dbname": "activity",
+    "database.server.name": "postgres",
+    "table.include.list": "activity.event_outbox",
+    "plugin.name": "pgoutput",
+    "publication.name": "debezium_publication",
+    "slot.name": "debezium_slot",
+
+    "transforms": "route",
+    "transforms.route.type": "org.apache.kafka.connect.transforms.RegexRouter",
+    "transforms.route.regex": "([^.]+)\\.([^.]+)\\.([^.]+)",
+    "transforms.route.replacement": "$1.$2.$3",
+
+    "key.converter": "org.apache.kafka.connect.json.JsonConverter",
+    "key.converter.schemas.enable": "false",
+    "value.converter": "org.apache.kafka.connect.json.JsonConverter",
+    "value.converter.schemas.enable": "false",
+
+    "tombstones.on.delete": "false",
+    "snapshot.mode": "never",
+    "heartbeat.interval.ms": "5000",
+
+    "topic.prefix": "postgres",
+    "decimal.handling.mode": "double",
+    "time.precision.mode": "adaptive_time_microseconds",
+    "include.schema.changes": "false"
+  }
+}
